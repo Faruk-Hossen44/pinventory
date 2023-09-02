@@ -26,7 +26,7 @@ app.use(cors());
 readdirSync("./routes").map(r => app.use("/api/v1", require(`./routes/${r}`)))
 
 // server
-const URI = process.env.DATABASE || 'mongodb+srv://<username>:<password>@cluster0.dfxgpct.mongodb.net/penvent?retryWrites=true&w=majority';
+const URI = process.env.DATABASE || 'mongodb://localhost:27017' || "mongodb+srv://<username>:<password>@cluster0.dfxgpct.mongodb.net/penvent?retryWrites=true&w=majority"
 const port = process.env.PORT || 4000;
 
 mongoose

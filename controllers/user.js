@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 //const Token = require("../models/token");
 const crypto = require("crypto");
+const user = require("../models/user");
 //const sendEmail = require("../utils/sendEmail");
 
 
@@ -69,6 +70,7 @@ const generateToken = (id) => {
       throw new Error("Invalid user data");
     }
   });
+  
   // Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -88,7 +90,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   // User exists, check if password is correct
-  const passwordIsCorrect = await bcrypt.compare(password, user.password);
+  //const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
   //   Generate Token
   const token = generateToken(user._id);
@@ -97,28 +99,28 @@ const loginUser = asyncHandler(async (req, res) => {
   res.cookie("token", token, {
     path: "/",
     httpOnly: true,
-    expires: new Date(Date.now() + 1000 * 86400), // 1 day
+    expires: new Date(Date.now() + 7 * 1000 * 86400), // 7 day
     sameSite: "none",
     // secure: true,
   });
 
-  if (user && passwordIsCorrect) {
-    const { _id, name, email, photo, phone, bio } = user;
-    res.status(200).json({
-      _id,
-      name,
-      email,
-      photo,
-      phone,
-      bio,
-      token,
-    });
-  } else {
-    res.status(400);
-    throw new Error("Invalid email or password");
-  }
-});
 
+if (user && password) {
+  const { _id, name, email, photo, phone, bio } = user;
+  res.status(200).json({
+    _id,
+    name,
+    email,
+    photo,
+    phone,
+    bio,
+    token,
+  });
+} else {
+  res.status(400);
+  throw new Error("Invalid email or password");
+}
+});
 // Logout User
 const logout = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
@@ -152,11 +154,83 @@ const getUser = asyncHandler(async (req, res) => {
 });
 
 
+//Get loging status
+const loginStatus = asyncHandler(async(req,res)=>{
+  const token = req.cookies.token;
+  if(!token){
+    return res.json(false);
+  }
+  //veryfy Token
+  const veryfyToken = jwt.verify(token,process.env.JWT_SECRET);
+  if(veryfyToken){
+    return res.json(true);
+  }
+  return res.json(false);
+});
+
+//UpdateUser
+const updateUser = asyncHandler(async (req,res)=>{
+  const user = await User.findById(req.user._id);
+
+  if(user){
+    const { name, email, photo, phone, bio } = user;
+    user.email = email;
+    user.name = req.body.name || name;
+    user.photo = req.body.photo || photo;
+    user.phone = req.body.phone || phone;
+    user.bio = req.body.bio || bio;
+    
+    const UpdatedUser = await user.save();
+    res.status(200).json({
+      _id: UpdatedUser._id,
+      name: UpdatedUser.name,
+      email:UpdatedUser.email, 
+      photo:UpdatedUser.photo,
+      phone:UpdatedUser.phone,
+      bio:UpdatedUser.bio
+     
+    });
+  }else{
+    res.status(400);
+    throw new Error("user not found");
+  }
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { oldPassword, password } = req.body;
+
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found, please signup");
+  }
+  //Validate
+  if (!oldPassword || !password) {
+    res.status(400);
+    throw new Error("Please add old and new password");
+  }
+
+  // check if old password matches password in DB
+  const passwordIsCorrect = await bcrypt.compare(oldPassword, user.password);
+
+  // Save new password
+  if (user && passwordIsCorrect) {
+    user.password = password;
+    await user.save();
+    res.status(200).send("Password change successful");
+  } else {
+    res.status(400);
+    throw new Error("Old password is incorrect");
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
   logout,
-  getUser
-
+  getUser,
+  loginStatus,
+  updateUser,
+  changePassword
 };
   
