@@ -11,3 +11,31 @@
 //     });
 //   })
 //   .catch((err) => console.log(err));
+
+
+TOKEN-SECRET=jjfmpfer8+9gerjoerjrlf
+JWT-SECRET=5845feeweweuyeheieehhe87en
+NODE-ENV="development"
+DATABASE="mongodb+srv://<username>:<password>@cluster0.dfxgpct.mongodb.net/penvent?retryWrites=true&w=majority"
+PORT=4000
+DB_USER: "firozteam5"
+PASS: "jdtp2ahzfBLEVwHb"
+
+TOKEN-SECRET="jjfmpfer8+9gerjoerjrlf"
+JWT_SECRET="5845feeweweuyeheieehhe87en"
+NODE-ENV="development"
+DATABASE="mongodb://localhost:27017"|| "mongodb+srv://<username>:<password>@cluster0.dfxgpct.mongodb.net/penvent?retryWrites=true&w=majority"
+PORT=4000
+DB_USER: "firozteam5"
+PASS: "jdtp2ahzfBLEVwHb"
+
+
+
+TOKEN_SECRET="jjfmpfer8+9gerjoerjrlf"
+JWT_SECRET="5845feeweweuyeheieehhe87en"
+NODE-ENV="development"
+DATABASE="mongodb+srv://<username>:<password>@cluster0.dfxgpct.mongodb.net/penvent?retryWrites=true&w=majority"
+PORT=4000
+DB_USER: "firozteam5"
+PASS: "jdtp2ahzfBLEVwHb"
+

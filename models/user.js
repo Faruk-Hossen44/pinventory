@@ -49,9 +49,9 @@ useSchema.pre("save",async function(next){
 
 // Hash password
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(this.password, salt);
+  const hashedPassword = bcrypt.hash(this.password, salt);
   this.password = hashedPassword;
   next();
 })
-const user = mongoose.model("user",useSchema);
-module.exports = user;
+const User = mongoose.model("user",useSchema);
+module.exports = User;
